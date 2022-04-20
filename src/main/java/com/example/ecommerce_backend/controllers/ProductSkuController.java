@@ -1,11 +1,16 @@
 package com.example.ecommerce_backend.controllers;
 
+import com.example.ecommerce_backend.common.enums.GenericHttpResponseCode;
+import com.example.ecommerce_backend.common.pojos.GenericHttpResponseBody;
 import com.example.ecommerce_backend.dtos.productsSkus.AddProductSkuDto;
 import com.example.ecommerce_backend.dtos.productsSkus.EditProductSkuDto;
+import com.example.ecommerce_backend.models.Product;
 import com.example.ecommerce_backend.models.ProductSku;
 import com.example.ecommerce_backend.services.ProductSkuService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -17,33 +22,48 @@ public class ProductSkuController {
     @Autowired
     private ProductSkuService productSkuService;
 
-    @ResponseBody
     @PostMapping("/product/{id}")
-    public void createProductSku(@PathVariable Integer id ,@RequestBody AddProductSkuDto addProductSkuDto){
+    public ResponseEntity<GenericHttpResponseBody<Optional<ProductSku>>> createProductSku(@PathVariable Integer id ,@RequestBody AddProductSkuDto addProductSkuDto){
         ModelMapper modelMapper = new ModelMapper();
         ProductSku productSkuToAdd = modelMapper.map(addProductSkuDto,ProductSku.class);
-        this.productSkuService.createProductSku(id,productSkuToAdd);
+
+        Optional<ProductSku> createdProductSku = this.productSkuService.createProductSku(id,productSkuToAdd);
+        GenericHttpResponseBody<Optional<ProductSku>> response= new GenericHttpResponseBody<>(GenericHttpResponseCode.Success,createdProductSku);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     @GetMapping()
-    public Iterable<ProductSku> listProductSku(){
-        return this.productSkuService.listProductSku();
+    public ResponseEntity<GenericHttpResponseBody<Iterable<ProductSku>>> listProductSku(){
+        Iterable<ProductSku> productSkus = this.productSkuService.listProductSku();
+        GenericHttpResponseBody<Iterable<ProductSku>> response= new GenericHttpResponseBody<>(GenericHttpResponseCode.Success, productSkus);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Optional<ProductSku> getProductSku(@PathVariable Integer id){
-        return this.productSkuService.getProductSku(id);
+    public ResponseEntity<GenericHttpResponseBody<Optional<ProductSku>>> getProductSku(@PathVariable Integer id){
+        Optional<ProductSku> productSku = this.productSkuService.getProductSku(id);
+        GenericHttpResponseBody<Optional<ProductSku>> response= new GenericHttpResponseBody<>(GenericHttpResponseCode.Success, productSku);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping()
-    public void updateProductSku(@RequestBody EditProductSkuDto editProductSkuDto){
+    public ResponseEntity<GenericHttpResponseBody<Optional<ProductSku>>> updateProductSku(@RequestBody EditProductSkuDto editProductSkuDto){
         ModelMapper modelMapper = new ModelMapper();
         ProductSku productSkuToEdit = modelMapper.map(editProductSkuDto,ProductSku.class);
-        this.productSkuService.updateProductSku(productSkuToEdit);
+
+        Optional<ProductSku> updatedProduct = this.productSkuService.updateProductSku(productSkuToEdit);
+        GenericHttpResponseBody<Optional<ProductSku>> response = new GenericHttpResponseBody<>(GenericHttpResponseCode.Success, updatedProduct);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteProductSku(@PathVariable Integer id){
+    public ResponseEntity<GenericHttpResponseBody<Optional<Product>>> deleteProductSku(@PathVariable Integer id){
         this.productSkuService.deleteProductSku(id);
+        GenericHttpResponseBody<Optional<Product>> response = new GenericHttpResponseBody<>(GenericHttpResponseCode.Success, Optional.empty());
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
 
 }

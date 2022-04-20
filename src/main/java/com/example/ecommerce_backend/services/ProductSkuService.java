@@ -16,20 +16,21 @@ public class ProductSkuService {
     @Autowired
     ProductSkuRepository productSkuRepository;
 
-    public void createProductSku(Integer productId,ProductSku productSkuToAdd){
+    public Optional<ProductSku> createProductSku(Integer productId,ProductSku productSkuToAdd){
         Optional<Product> product = this.productService.getProduct(productId);
 
         ProductSku productSku = new ProductSku();
 
         if(!product.isPresent()){
-            return;
+            return Optional.empty();
         }
 
         productSku.setName(productSkuToAdd.getName());
         productSku.setQuantity(productSkuToAdd.getQuantity());
         productSku.setProduct(product.get());
+        ProductSku createdProduct = this.productSkuRepository.save(productSku);
 
-        this.productSkuRepository.save(productSku);
+        return Optional.of(createdProduct);
     }
 
     public Iterable<ProductSku> listProductSku(){
@@ -40,15 +41,16 @@ public class ProductSkuService {
         return this.productSkuRepository.findById(id);
     }
 
-    public void updateProductSku(ProductSku productSkuToEdit){
+    public Optional<ProductSku> updateProductSku(ProductSku productSkuToEdit){
         Optional<ProductSku> productSku = this.productSkuRepository.findById(productSkuToEdit.getId());
 
         if(!productSku.isPresent()){
-            return;
+            return Optional.empty();
         }
 
         productSkuToEdit.setProduct(productSku.get().getProduct());
-        this.productSkuRepository.save(productSkuToEdit);
+        ProductSku updatedProduct = this.productSkuRepository.save(productSkuToEdit);
+        return Optional.of(updatedProduct);
     }
 
     public void deleteProductSku(Integer id){

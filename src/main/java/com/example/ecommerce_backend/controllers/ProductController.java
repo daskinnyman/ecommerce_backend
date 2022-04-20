@@ -1,11 +1,15 @@
 package com.example.ecommerce_backend.controllers;
 
+import com.example.ecommerce_backend.common.enums.GenericHttpResponseCode;
+import com.example.ecommerce_backend.common.pojos.GenericHttpResponseBody;
 import com.example.ecommerce_backend.dtos.products.AddProductDto;
 import com.example.ecommerce_backend.dtos.products.EditProductDto;
 import com.example.ecommerce_backend.models.Product;
 import com.example.ecommerce_backend.services.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -18,31 +22,48 @@ public class ProductController {
     ProductService productService;
 
     @PostMapping()
-    public Product createProduct(@RequestBody AddProductDto addProductDto){
+    public ResponseEntity<GenericHttpResponseBody<Product>> createProduct(@RequestBody AddProductDto addProductDto){
         ModelMapper modelMapper = new ModelMapper();
         Product productToAdd = modelMapper.map(addProductDto,Product.class);
-        return this.productService.createProduct(productToAdd);
+
+        Product productAdded = this.productService.createProduct(productToAdd);
+        GenericHttpResponseBody<Product> response = new GenericHttpResponseBody<>(GenericHttpResponseCode.Success,productAdded);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping()
-    public Iterable<Product> listProduct(){
-       return this.productService.listProducts();
+    public ResponseEntity<GenericHttpResponseBody<Iterable<Product>>> listProduct(){
+        Iterable<Product> products = this.productService.listProducts();
+        GenericHttpResponseBody<Iterable<Product>> response = new GenericHttpResponseBody<>(GenericHttpResponseCode.Success,products);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{productId}")
-    public Optional<Product> getProduct(@PathVariable Integer productId){
-        return this.productService.getProduct(productId);
+    public ResponseEntity<GenericHttpResponseBody<Optional<Product>>> getProduct(@PathVariable Integer productId){
+        Optional<Product> product = this.productService.getProduct(productId);
+        GenericHttpResponseBody<Optional<Product>> response = new GenericHttpResponseBody<>(GenericHttpResponseCode.Success,product);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping()
-    public void updateProduct(@RequestBody EditProductDto editProductDto){
+    public ResponseEntity<GenericHttpResponseBody<Optional<Product>>> updateProduct(@RequestBody EditProductDto editProductDto){
         ModelMapper modelMapper = new ModelMapper();
         Product productToEdit = modelMapper.map(editProductDto,Product.class);
-        this.productService.updateProduct(productToEdit);
+
+        Optional<Product> productEdited = this.productService.updateProduct(productToEdit);
+        GenericHttpResponseBody<Optional<Product>> response = new GenericHttpResponseBody<>(GenericHttpResponseCode.Success,productEdited);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/{productId}")
-    public void deleteProduct(@PathVariable Integer productId){
+    public ResponseEntity<GenericHttpResponseBody<Optional<Product>>> deleteProduct(@PathVariable Integer productId){
         this.productService.deleteProduct(productId);
+        GenericHttpResponseBody<Optional<Product>> response = new GenericHttpResponseBody<>(GenericHttpResponseCode.Success,Optional.empty());
+
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
 }

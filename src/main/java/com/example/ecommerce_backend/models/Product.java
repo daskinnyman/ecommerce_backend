@@ -1,6 +1,5 @@
 package com.example.ecommerce_backend.models;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import javax.persistence.*;
 import java.util.Collection;
 import lombok.Getter;

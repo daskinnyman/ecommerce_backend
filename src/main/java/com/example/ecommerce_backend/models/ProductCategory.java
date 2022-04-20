@@ -1,5 +1,6 @@
 package com.example.ecommerce_backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,6 +27,7 @@ public class ProductCategory {
     @OneToMany(mappedBy = "parent")
     private Collection<ProductCategory> children;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "category")
     private Collection<Product> products;
 }

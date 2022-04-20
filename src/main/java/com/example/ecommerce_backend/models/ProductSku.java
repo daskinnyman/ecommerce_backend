@@ -1,5 +1,6 @@
 package com.example.ecommerce_backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +22,7 @@ public class ProductSku {
     @Column(name = "quantity", columnDefinition = "integer default 0")
     private Integer quantity;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="product_id")
     private Product product;

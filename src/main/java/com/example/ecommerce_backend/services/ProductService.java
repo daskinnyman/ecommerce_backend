@@ -23,13 +23,15 @@ public class ProductService {
         return this.productRepository.findById(id);
     }
 
-    public void updateProduct(Product productToEdit){
+    public Optional<Product> updateProduct(Product productToEdit){
         Optional<Product> product = this.getProduct(productToEdit.getId());
+
         if(!product.isPresent()){
-           return;
+           return Optional.empty();
         }
 
-        this.productRepository.save(productToEdit);
+        Product productAdded = this.productRepository.save(productToEdit);
+        return Optional.of(productAdded);
     }
 
     public void deleteProduct(Integer id){
@@ -41,6 +43,4 @@ public class ProductService {
 
         this.productRepository.delete(product.get());
     }
-
-
 }
