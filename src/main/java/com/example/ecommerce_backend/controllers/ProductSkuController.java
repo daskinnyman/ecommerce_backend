@@ -63,6 +63,7 @@ public class ProductSkuController {
     public ResponseEntity<GenericHttpResponseBody<Optional<Product>>> deleteProductSku(@PathVariable Integer id){
         this.productSkuService.deleteProductSku(id);
         GenericHttpResponseBody<Optional<Product>> response = new GenericHttpResponseBody<>(GenericHttpResponseCode.Success, Optional.empty());
+
         return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
 

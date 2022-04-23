@@ -7,17 +7,17 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GenericHttpResponseBody<T> {
-    private GenericHttpResponseCode code;
+    private Integer code;
     private T Data;
     private String message = "";
 
     public GenericHttpResponseBody(GenericHttpResponseCode code, T data){
-        this.code = code;
+        this.code = code.getResponseCode();
         this.Data = data;
     }
 
     public GenericHttpResponseBody(GenericHttpResponseCode code, T data, String message){
-        this.code = code;
+        this.code = code.getResponseCode();
         this.Data = data;
         this.message = message;
     }

@@ -16,7 +16,7 @@ public class ProductSkuService {
     @Autowired
     ProductSkuRepository productSkuRepository;
 
-    public Optional<ProductSku> createProductSku(Integer productId,ProductSku productSkuToAdd){
+    public Optional<ProductSku> createProductSku(Integer productId, ProductSku productSkuToAdd){
         Optional<Product> product = this.productService.getProduct(productId);
 
         ProductSku productSku = new ProductSku();
